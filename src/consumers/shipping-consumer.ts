@@ -13,7 +13,7 @@ async function start() {
   ch.consume(q.queue, msg => {
     if (!msg) return;
     const payload = JSON.parse(msg.content.toString());
-    logger.info('Shipping consumer received', payload);
+    logger.info(`Shipping consumer received ${JSON.stringify(payload)}`);
     ch.ack(msg);
   });
 }
