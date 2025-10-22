@@ -1,8 +1,3 @@
-/**
- * Example consumer that connects to RabbitMQ and listens for order.status.updated
- * Intended as a separate process/service in a microservices architecture.
- * Run with: ts-node src/consumers/shipping-consumer.ts (after npm install)
- */
 import * as amqp from 'amqplib';
 import { logger } from '../common/logger';
 
@@ -19,7 +14,6 @@ async function start() {
     if (!msg) return;
     const payload = JSON.parse(msg.content.toString());
     logger.info('Shipping consumer received', payload);
-    // here you'd trigger shipping workflow
     ch.ack(msg);
   });
 }

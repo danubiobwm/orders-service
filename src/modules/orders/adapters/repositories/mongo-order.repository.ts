@@ -18,27 +18,18 @@ const OrderModel: Model<any> = mongoose.models.Order || mongoose.model('Order', 
 @Injectable()
 export class MongoOrderRepository implements OrderRepositoryPort {
   async save(order: Order): Promise<Order> {
-    const doc = await OrderModel.create({
-      _id: order.id,
-      customerId: order.customerId,
-      items: order.items,
-      total: order.total,
-      status: order.status,
-      createdAt: order.createdAt,
-      updatedAt: order.updatedAt
-    });
-
+    const doc: any = await OrderModel.create(order);
     return new Order(doc._id, doc.customerId, doc.items, doc.total, doc.status, doc.createdAt, doc.updatedAt);
   }
 
   async findById(id: string): Promise<Order | null> {
-    const doc = await OrderModel.findById(id).lean();
+    const doc: any = await OrderModel.findById(id).lean();
     if (!doc) return null;
     return new Order(doc._id, doc.customerId, doc.items, doc.total, doc.status, doc.createdAt, doc.updatedAt);
   }
 
   async updateStatus(id: string, status: string): Promise<Order | null> {
-    const doc = await OrderModel.findByIdAndUpdate(id, { status, updatedAt: new Date() }, { new: true }).lean();
+    const doc: any = await OrderModel.findByIdAndUpdate(id, { status, updatedAt: new Date() }, { new: true }).lean();
     if (!doc) return null;
     return new Order(doc._id, doc.customerId, doc.items, doc.total, doc.status, doc.createdAt, doc.updatedAt);
   }

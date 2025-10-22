@@ -6,8 +6,8 @@ export async function connectMongo() {
   try {
     await mongoose.connect(url);
     logger.info('MongoDB connected');
-  } catch (err) {
-    logger.error('MongoDB connection error', err);
+  } catch (err: any) {
+    logger.error(`MongoDB connection error: ${err.message}`);
     throw err;
   }
 }
