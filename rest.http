@@ -1,0 +1,25 @@
+POST http://localhost:3000/orders
+Content-Type: application/json
+{
+  "customerId": "c1",
+  "items": [{"productId":"p1","quantity":2}],
+  "total": 200
+}
+
+GET http://localhost:3000/orders/{id}
+//GET http://localhost:3000/orders/74612b61-2b0e-4ff8-99df-da7e1d75f445
+//exemplo de id 74612b61-2b0e-4ff8-99df-da7e1d75f445
+//{
+//  "id": "74612b61-2b0e-4ff8-99df-da7e1d75f445",
+//  "customerId": "c1",
+//  "items": [
+//    {
+//      "productId": "p1",
+//      "quantity": 2
+//    }
+//  ],
+//  "total": 200,
+//  "status": "created",
+//  "createdAt": "2025-10-22T20:55:21.580Z",
+//  "updatedAt": "2025-10-22T20:55:21.580Z"
+//}
