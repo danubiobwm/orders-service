@@ -1,6 +1,6 @@
 export enum OrderStatus {
-  CREATED = 'created',
-  PROCESSING = 'processing',
-  SHIPPED = 'shipped',
-  DELIVERED = 'delivered'
+  CREATED = 'criado',
+  PROCESSING = 'em_processamento',
+  SHIPPED = 'enviado',
+  DELIVERED = 'entregue',
 }

@@ -1,25 +1,40 @@
+GET http://localhost:3000/health
+Content-Type: application/json
+
+###
+
+###  Criar pedido
 POST http://localhost:3000/orders
 Content-Type: application/json
+
 {
-  "customerId": "c1",
-  "items": [{"productId":"p1","quantity":2}],
-  "total": 200
+  "customerId": "cust-123",
+  "items": [
+    { "productId": "p01", "quantity": 2 },
+    { "productId": "p02", "quantity": 1 }
+  ],
+  "total": 150.5
 }
 
-GET http://localhost:3000/orders/{id}
-//GET http://localhost:3000/orders/74612b61-2b0e-4ff8-99df-da7e1d75f445
-//exemplo de id 74612b61-2b0e-4ff8-99df-da7e1d75f445
-//{
-//  "id": "74612b61-2b0e-4ff8-99df-da7e1d75f445",
-//  "customerId": "c1",
-//  "items": [
-//    {
-//      "productId": "p1",
-//      "quantity": 2
-//    }
-//  ],
-//  "total": 200,
-//  "status": "created",
-//  "createdAt": "2025-10-22T20:55:21.580Z",
-//  "updatedAt": "2025-10-22T20:55:21.580Z"
-//}
+###
+
+###  Buscar pedido pelo ID
+# Substitua {{id}} pelo id retornado na criação
+GET http://localhost:3000/orders/89385bed-485e-4443-aeb3-08b2573a0577
+Content-Type: application/json
+
+###
+
+###  Atualizar status do pedido (gera evento RabbitMQ)
+PATCH http://localhost:3000/orders/89385bed-485e-4443-aeb3-08b2573a0577/status
+Content-Type: application/json
+
+{
+  "status": "shipped"
+}
+###   "status": "enviado"
+### PATCH /orders/{id}/status?status=enviado
+
+###  Deletar pedido
+DELETE http://localhost:3000/orders/{{id}}
+Content-Type: application/json

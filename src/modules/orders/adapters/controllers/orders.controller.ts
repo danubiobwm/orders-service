@@ -1,11 +1,13 @@
-import { Controller, Post, Body, Get, Param, Patch, HttpException, HttpStatus, Inject } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Patch, HttpException, HttpStatus, Inject, Delete } from '@nestjs/common';
 import { CreateOrderDto } from '../../dtos/create-order.dto';
 import { CreateOrderUseCase } from '../../application/create-order.usecase';
 import { GetOrderUseCase } from '../../application/get-order.usecase';
 import { UpdateOrderStatusUseCase } from '../../application/update-order-status.usecase';
-import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiResponse, ApiOperation, ApiParam, ApiBody } from '@nestjs/swagger';
 import { OrderRepositoryPort } from '../../ports/order-repository.port';
 import { EventPublisherPort } from '../../ports/event-publisher.port';
+import { UpdateStatusDto } from '../../dtos/update-status.dto';
+import { ParseObjectIdPipe } from '../../../../common/pipes/parse-objectid.pipe';
 
 @ApiTags('orders')
 @Controller('orders')
@@ -45,9 +47,31 @@ export class OrdersController {
 
   @Patch(':id/status')
   @ApiOperation({ summary: 'Atualiza status do pedido' })
-  async updateStatus(@Param('id') id: string, @Body('status') status: string) {
-    const updated = await this.updateOrderStatusUC.execute(id, status);
+  @ApiParam({ name: 'id', description: 'ID do pedido (Mongo ObjectId)' })
+  @ApiBody({ type: UpdateStatusDto })
+  @ApiResponse({ status: 200, description: 'Pedido atualizado com sucesso' })
+  @ApiResponse({ status: 400, description: 'Invalid id or payload' })
+  @ApiResponse({ status: 404, description: 'Order not found' })
+  async updateStatus(
+    @Param('id', ParseObjectIdPipe) id: string,
+    @Body() dto: UpdateStatusDto,
+  ) {
+    const updated = await this.updateOrderStatusUC.execute(id, dto.status);
     if (!updated) throw new HttpException('Order not found', HttpStatus.NOT_FOUND);
     return updated;
   }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Exclui um pedido' })
+  @ApiResponse({ status: 200, description: 'Pedido deletado com sucesso' })
+  @ApiResponse({ status: 404, description: 'Pedido não encontrado' })
+  async delete(@Param('id') id: string) {
+    const found = await this.repo.findById(id);
+    if (!found) {
+      throw new HttpException('Order not found', HttpStatus.NOT_FOUND);
+    }
+    await (this.repo as any).delete(id);
+    return { message: 'Order deleted successfully' };
+  }
 }
+
