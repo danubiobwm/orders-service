@@ -1,39 +1,45 @@
+
+---
+
+## Use este arquivo no VSCode com a extensão **REST Client** (`humao.rest-client`)
+
+###  Health Check
 GET http://localhost:3000/health
 Content-Type: application/json
 
 ###
 
-###  Criar pedido
+###  Criar novo pedido
 POST http://localhost:3000/orders
 Content-Type: application/json
 
 {
-  "customerId": "cust-123",
+  "customerId": "cust-001",
   "items": [
-    { "productId": "p01", "quantity": 2 },
-    { "productId": "p02", "quantity": 1 }
+    { "productId": "P001", "quantity": 2 },
+    { "productId": "P002", "quantity": 1 }
   ],
-  "total": 150.5
+  "total": 350.0
 }
 
 ###
 
-###  Buscar pedido pelo ID
-# Substitua {{id}} pelo id retornado na criação
-GET http://localhost:3000/orders/cc8eed4b-d068-4b3f-8cec-b516e4d92923
+###  Buscar pedido por ID
+# Substitua {{id}} pelo ID retornado ao criar o pedido
+GET http://localhost:3000/orders/{{id}}
 Content-Type: application/json
 
 ###
 
-###  Atualizar status do pedido (gera evento RabbitMQ)
-PATCH http://localhost:3000/orders/cc8eed4b-d068-4b3f-8cec-b516e4d92923/status
+###  Atualizar status do pedido
+PATCH http://localhost:3000/orders/{{id}}/status
 Content-Type: application/json
 
 {
-  "status": "entregue"
+  "status": "shipped"
 }
-###   "status": criado/ "enviado" / entregue / em_processamento
-### PATCH /orders/{id}/status?status=enviado
+
+###
 
 ###  Deletar pedido
 DELETE http://localhost:3000/orders/{{id}}
