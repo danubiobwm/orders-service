@@ -20,17 +20,17 @@ Content-Type: application/json
 
 ###  Buscar pedido pelo ID
 # Substitua {{id}} pelo id retornado na criação
-GET http://localhost:3000/orders/89385bed-485e-4443-aeb3-08b2573a0577
+GET http://localhost:3000/orders/2df3f668-9169-4967-afff-432396d89b9f
 Content-Type: application/json
 
 ###
 
 ###  Atualizar status do pedido (gera evento RabbitMQ)
-PATCH http://localhost:3000/orders/89385bed-485e-4443-aeb3-08b2573a0577/status
+PATCH http://localhost:3000/orders/2df3f668-9169-4967-afff-432396d89b9f/status
 Content-Type: application/json
 
 {
-  "status": "shipped"
+  "status": "enviado"
 }
 ###   "status": "enviado"
 ### PATCH /orders/{id}/status?status=enviado
