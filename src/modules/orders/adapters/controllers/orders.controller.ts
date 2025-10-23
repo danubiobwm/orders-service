@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, Patch, HttpException, HttpStatus, Inject, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Patch, HttpException, HttpStatus, Inject, Delete, ParseUUIDPipe } from '@nestjs/common';
 import { CreateOrderDto } from '../../dtos/create-order.dto';
 import { CreateOrderUseCase } from '../../application/create-order.usecase';
 import { GetOrderUseCase } from '../../application/get-order.usecase';
@@ -7,7 +7,6 @@ import { ApiTags, ApiResponse, ApiOperation, ApiParam, ApiBody } from '@nestjs/s
 import { OrderRepositoryPort } from '../../ports/order-repository.port';
 import { EventPublisherPort } from '../../ports/event-publisher.port';
 import { UpdateStatusDto } from '../../dtos/update-status.dto';
-import { ParseObjectIdPipe } from '../../../../common/pipes/parse-objectid.pipe';
 
 @ApiTags('orders')
 @Controller('orders')
@@ -53,7 +52,7 @@ export class OrdersController {
   @ApiResponse({ status: 400, description: 'Invalid id or payload' })
   @ApiResponse({ status: 404, description: 'Order not found' })
   async updateStatus(
-    @Param('id', ParseObjectIdPipe) id: string,
+     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
     @Body() dto: UpdateStatusDto,
   ) {
     const updated = await this.updateOrderStatusUC.execute(id, dto.status);
