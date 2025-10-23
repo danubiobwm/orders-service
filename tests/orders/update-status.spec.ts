@@ -9,6 +9,7 @@ describe('UpdateOrderStatusUseCase', () => {
     const updated = await uc.execute('1', 'shipped');
     expect(mockRepo.updateStatus).toHaveBeenCalledWith('1', 'shipped');
     expect(mockPub.publish).toHaveBeenCalled();
-    expect(updated.status).toBe('shipped');
+    expect(updated).not.toBeNull();
+    expect(updated?.status).toBe('shipped');
   });
 });
