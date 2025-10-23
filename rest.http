@@ -26,20 +26,24 @@ Content-Type: application/json
 
 ###  Buscar pedido por ID
 # Substitua {{id}} pelo ID retornado ao criar o pedido
-GET http://localhost:3000/orders/{{id}}
+GET http://localhost:3000/orders/40b6ba32-0027-4a7f-aa98-36f021dd03a6
 Content-Type: application/json
 
 ###
 
 ###  Atualizar status do pedido
-PATCH http://localhost:3000/orders/{{id}}/status
+PATCH http://localhost:3000/orders/40b6ba32-0027-4a7f-aa98-36f021dd03a6/status
 Content-Type: application/json
 
 {
-  "status": "shipped"
+  "status": "em_processamento"
 }
 
 ###
+  # 'criado',
+  # 'em_processamento',
+  # 'enviado',
+  # 'entregue',
 
 ###  Deletar pedido
 DELETE http://localhost:3000/orders/{{id}}

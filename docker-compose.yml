@@ -11,6 +11,12 @@ services:
     depends_on:
       - mongo
       - rabbitmq
+  consumer:
+      build: .
+      command: npm run start:consumer
+      depends_on:
+        - rabbitmq
+        - mongo
   mongo:
     image: mongo:6.0
     ports:
