@@ -1,0 +1,79 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    services:
+      mongo:
+        image: mongo:6
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd="mongosh --eval 'db.adminCommand({ping:1})' > /dev/null 2>&1 || exit 1"
+          --health-interval=10s --health-timeout=5s --health-retries=5
+      rabbitmq:
+        image: rabbitmq:3-management
+        ports:
+          - 5672:5672
+          - 15672:15672
+        options: >-
+          --health-cmd='rabbitmq-diagnostics status >/dev/null 2>&1 || exit 1'
+          --health-interval=10s --health-timeout=5s --health-retries=5
+
+    env:
+      MONGODB_URI: mongodb://mongo:27017/orders
+      RABBITMQ_URL: amqp://rabbitmq
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Wait for Mongo & RabbitMQ (short)
+        run: |
+          echo "Waiting for Mongo and RabbitMQ to be ready..."
+          for i in {1..20}; do
+            nc -z mongo 27017 && nc -z rabbitmq 5672 && echo "services up" && break
+            echo "waiting... $i"
+            sleep 3
+          done
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Run unit tests
+        run: npm test -- --runInBand
+
+      - name: Run e2e tests (integration + RabbitMQ)
+        env:
+          NODE_ENV: test
+        run: npm run test:e2e -- --runInBand
+
+      - name: Build Docker image
+        run: |
+          docker build -t ${{ secrets.DOCKERHUB_REPO }}:latest .
+
+      - name: Log in to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Push to DockerHub
+        run: |
+          docker tag ${{ secrets.DOCKERHUB_REPO }}:latest ${{ secrets.DOCKERHUB_REPO }}:${{ github.sha }}
+          docker push ${{ secrets.DOCKERHUB_REPO }}:latest
+          docker push ${{ secrets.DOCKERHUB_REPO }}:${{ github.sha }}
